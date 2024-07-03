@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# Define the log and password file paths
 LOGFILE="/var/log/user_management.log"
-PASSWORD_FILE="/var/secure/user_passwords.txt"
+PASSWORD_FILE="/var/secure/user_passwords.csv"
 
 # Create necessary directories and set permissions
 mkdir -p /var/secure
@@ -32,9 +31,9 @@ fi
 
 USERFILE="$1"
 
-# Check if the user file exists
+# Check if the user file exists using full path
 if [ ! -f "$USERFILE" ]; then
-    echo "User file not found!"
+    echo "User file $USERFILE not found!"
     exit 1
 fi
 
@@ -60,6 +59,7 @@ while IFS=';' read -r username groups; do
     fi
 
     # Create user's personal group (same as username)
+    groupadd "$username"
     usermod -g "$username" "$username"
 
     # Add user to additional groups
@@ -85,4 +85,3 @@ while IFS=';' read -r username groups; do
 done < "$USERFILE"
 
 log "User creation process completed."
-
